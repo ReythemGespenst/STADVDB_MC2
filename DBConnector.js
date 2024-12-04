@@ -1,2 +1,6 @@
 import 'dotenv/config';
-import {Sequelize} from 'sequelize';
+const mysql = require('mysql');
+
+module.exports = {
+    con: mysql.createConnection
+}
