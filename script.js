@@ -23,3 +23,32 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("node-details").textContent = nodeDetails;
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('http://localhost:3000/api/tables')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('database-structure');
+            for (const [tableName, columns] of Object.entries(data)) {
+                const tableDiv = document.createElement('div');
+                tableDiv.classList.add('table');
+
+                const tableTitle = document.createElement('h3');
+                tableTitle.textContent = `Table: ${tableName}`;
+                tableDiv.appendChild(tableTitle);
+
+                const columnList = document.createElement('ul');
+                columns.forEach(column => {
+                    const columnItem = document.createElement('li');
+                    columnItem.textContent = `${column.column} (${column.type})`;
+                    columnList.appendChild(columnItem);
+                });
+
+                tableDiv.appendChild(columnList);
+                container.appendChild(tableDiv);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching database structure:', error);
+        });
+});

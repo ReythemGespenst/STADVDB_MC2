@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Node</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Central Node</h1>
+    </header>
+
+    <main>
+        <section id="node-info">
+            <h2 id="node-title">Central Node</h2>
+            <p id="node-details">IP: <%= ip %> | Port: <%= port %></p>
+        </section>
+
+        <section id="crud-operations">
+            <h2>CRUD Operations</h2>
+
+            <!-- Create Operation -->
+            <h3>Create</h3>
+            <form action="/create" method="POST">
+                <input type="number" name="retailer_code" placeholder="Retailer Code" required>
+                <input type="number" name="product_number" placeholder="Product Number" required>
+                <input type="number" name="order_method_code" placeholder="Order Method Code" required>
+                <input type="date" name="date" placeholder="Date" required>
+                <input type="number" name="quantity" placeholder="Quantity" required>
+                <input type="number" step="0.01" name="unit_price" placeholder="Unit Price" required>
+                <input type="number" step="0.01" name="unit_sale_price" placeholder="Unit Sale Price" required>
+                <button type="submit">Create</button>
+            </form>
+
+            <!-- Read Operation -->
+            <h3>Read</h3>
+            <form action="/read" method="GET">
+                <input type="number" name="retailer_code" placeholder="Retailer Code">
+                <button type="submit">Read</button>
+            </form>
+        </section>
+
+        <section id="sales-data">
+            <h2>Sales Data</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Retailer Code</th>
+                        <th>Product Number</th>
+                        <th>Order Method Code</th>
+                        <th>Date</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Unit Sale Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% data.forEach(row => { %>
+                        <tr>
+                            <td><%= row['Retailer code'] %></td>
+                            <td><%= row['Product number'] %></td>
+                            <td><%= row['Order method code'] %></td>
+                            <td><%= row['Date'] %></td>
+                            <td><%= row['Quantity'] %></td>
+                            <td><%= row['Unit price'] %></td>
+                            <td><%= row['Unit sale price'] %></td>
+                            <td>
+                                <form action="/delete" method="POST" style="display:inline;">
+                                    <input type="hidden" name="retailer_code" value="<%= row['Retailer code'] %>">
+                                    <input type="hidden" name="product_number" value="<%= row['Product number'] %>">
+                                    <input type="hidden" name="order_method_code" value="<%= row['Order method code'] %>">
+                                    <input type="hidden" name="date" value="<%= row['Date'] %>">
+                                    <input type="hidden" name="quantity" value="<%= row['Quantity'] %>">
+                                    <input type="hidden" name="unit_price" value="<%= row['Unit price'] %>">
+                                    <input type="hidden" name="unit_sale_price" value="<%= row['Unit sale price'] %>">
+                                    <button type="submit">Delete</button>
+                                </form>
+                                <button onclick="openUpdateForm(this, '<%= row['Retailer code'] %>', '<%= row['Product number'] %>', '<%= row['Order method code'] %>', '<%= row['Date'] %>', '<%= row['Quantity'] %>', '<%= row['Unit price'] %>', '<%= row['Unit sale price'] %>')">Update</button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Update Form Template -->
+        <template id="update-form-template">
+            <tr id="update-form-row">
+                <td colspan="8">
+                    <section id="update-form">
+                        <h3>Update</h3>
+                        <form action="/update" method="POST">
+                            <input type="hidden" name="retailer_code" id="update-retailer-code" required>
+                            <input type="hidden" name="product_number" id="update-product-number" required>
+                            <input type="number" name="order_method_code" id="update-order-method-code" placeholder="Order Method Code" required>
+                            <input type="date" name="date" id="update-date" placeholder="Date" required>
+                            <input type="number" name="quantity" id="update-quantity" placeholder="Quantity" required>
+                            <input type="number" step="0.01" name="unit_price" id="update-unit-price" placeholder="Unit Price" required>
+                            <input type="number" step="0.01" name="unit_sale_price" id="update-unit-sale-price" placeholder="Unit Sale Price" required>
+                            <button type="submit">Update</button>
+                        </form>
+                    </section>
+                </td>
+            </tr>
+        </template>
+    </main>
+
+    <script>
+        function openUpdateForm(button, retailerCode, productNumber, orderMethodCode, date, quantity, unitPrice, unitSalePrice) {
+            // Remove any existing update form
+            const existingForm = document.getElementById('update-form-row');
+            if (existingForm) {
+                existingForm.remove();
+            }
+
+            // Get the template and clone it
+            const template = document.getElementById('update-form-template');
+            const clone = template.content.cloneNode(true);
+
+            // Set the values in the form
+            clone.getElementById('update-retailer-code').value = retailerCode;
+            clone.getElementById('update-product-number').value = productNumber;
+            clone.getElementById('update-order-method-code').value = orderMethodCode;
+            clone.getElementById('update-date').value = date;
+            clone.getElementById('update-quantity').value = quantity;
+            clone.getElementById('update-unit-price').value = unitPrice;
+            clone.getElementById('update-unit-sale-price').value = unitSalePrice;
+
+            // Insert the form after the row containing the button
+            const row = button.closest('tr');
+            row.parentNode.insertBefore(clone, row.nextSibling);
+        }
+    </script>
+</body>
+</html>
