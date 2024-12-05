@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <header>
+        <h1>Central Node</h1>
+    </header>
 
     <main>
         <section id="node-info">
@@ -15,6 +18,8 @@
         </section>
 
         <section id="crud-operations">
+            <h2>CRUD Operations</h2>
+
             <!-- Create Operation -->
             <h3>Create</h3>
             <form action="/create" method="POST">
@@ -52,6 +57,7 @@
             <h3>Delete</h3>
             <form action="/delete" method="POST">
                 <input type="number" name="retailer_code" placeholder="Retailer Code" required>
+                <input type="number" name="product_number" placeholder="Product Number" required>
                 <button type="submit">Delete</button>
             </form>
         </section>
