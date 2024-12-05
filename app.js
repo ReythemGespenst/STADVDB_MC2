@@ -107,9 +107,9 @@ app.post('/update', (req, res) => {
 
 // Delete
 app.post('/delete', (req, res) => {
-    const { retailer_code } = req.body;
-    const query = 'DELETE FROM go_daily_sales WHERE `Retailer Code` = ?';
-    nodes.node1.query(query, [retailer_code], (err, results) => {
+    const { retailer_code, product_number, order_method_code, date, quantity, unit_price, unit_sale_price} = req.body;
+    const query = 'DELETE FROM go_daily_sales WHERE `Retailer Code` = ?, `Product number` = ?, `Order method code` = ?, `Date` = ?, `Quantity` = ?, `Unit price` = ?, `Unit sale price` = ?';
+    nodes.node1.query(query, [retailer_code, product_number, order_method_code, date, quantity, unit_price, unit_sale_price], (err, results) => {
         if (err) throw err;
         res.redirect('/node1');
     });
