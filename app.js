@@ -65,7 +65,7 @@ app.get('/node1', (req, res) => {
 app.get('/node2', (req, res) => {
     nodes.node2.query('SELECT * FROM go_daily_sales;', (err, results) => {
         if (err) throw err;
-        res.render('node', { data: results, ip: nodes.node2.config.host, port: nodes.node2.config.port });
+        res.render('node', { data: results, ip: nodes.node2.config.host, port: nodes.node2.config.port, no: 2});
     });
 });
 
@@ -78,7 +78,7 @@ app.get('/node3', (req, res) => {
 
 app.post('/create', (req, res) => {
     const { retailer_code, product_number, order_method_code, date, quantity, unit_price, unit_sale_price } = req.body;
-    const query = 'INSERT INTO go_daily_sales (`Retailer Code`, `Product Number`, `Order Method Code`, `Date`, `Quantity`, `Unit Price`, `Unit Sale Price`) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO go_daily_sales (`Retailer code`, `Product number`, `Order method code`, `Date`, `Quantity`, `Unit price`, `Unit sale price`) VALUES (?, ?, ?, ?, ?, ?, ?)';
     nodes.node1.query(query, [retailer_code, product_number, order_method_code, date, quantity, unit_price, unit_sale_price], (err, results) => {
         if (err) throw err;
         res.redirect('/node1');
@@ -88,7 +88,7 @@ app.post('/create', (req, res) => {
 // Read
 app.get('/read', (req, res) => {
     const { retailer_code } = req.query;
-    const query = 'SELECT * FROM go_daily_sales WHERE `Retailer Code` = ?';
+    const query = 'SELECT * FROM go_daily_sales WHERE `Retailer code` = ?';
     nodes.node1.query(query, [retailer_code], (err, results) => {
         if (err) throw err;
         res.render('centralnode', { data: results, ip: nodes.node1.config.host, port: nodes.node1.config.port });
@@ -98,22 +98,44 @@ app.get('/read', (req, res) => {
 // Update
 app.post('/update', (req, res) => {
     const { retailer_code, product_number, order_method_code, date, quantity, unit_price, unit_sale_price } = req.body;
-    const query = 'UPDATE go_daily_sales SET `Product Number` = ?, `Order Method Code` = ?, `Date` = ?, `Quantity` = ?, `Unit Price` = ?, `Unit Sale Price` = ? WHERE `Retailer Code` = ?';
-    nodes.node1.query(query, [product_number, order_method_code, date, quantity, unit_price, unit_sale_price, retailer_code], (err, results) => {
+    const query = 'UPDATE go_daily_sales SET `Order method code` = ?, `Date` = ?, `Quantity` = ?, `Unit price` = ?, `Unit sale price` = ? WHERE `Retailer code` = ? AND `Product number` = ?';
+    nodes.node1.query(query, [order_method_code, date, quantity, unit_price, unit_sale_price, retailer_code, product_number], (err, results) => {
         if (err) throw err;
         res.redirect('/node1');
     });
 });
 
 // Delete
+// app.post('/delete', (req, res) => {
+//     const { retailer_code, product_number, order_method_code, date, quantity, unit_price, unit_sale_price } = req.body;
+//     const formattedDate = new Date(date).toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
+//     // const query = 'DELETE FROM go_daily_sales WHERE `Retailer Code` = ? AND `Product Number` = ? AND `Order Method Code` = ? AND `Date` = ? AND `Quantity` = ? AND `Unit Price` = ? AND `Unit Sale Price` = ?';
+//     const query = 'DELETE FROM go_daily_sales WHERE `Retailer Code` = 1205 AND `Product Number` = 71110 AND `Order Method Code` = 3 AND `Date` =  "2015-01-11" AND `Quantity` = 28 AND `Unit Price` = 96 AND `Unit Sale Price` = 93;'
+//     nodes.node1.query(query, [retailer_code, product_number, order_method_code, formattedDate, quantity, unit_price, unit_sale_price], (err, results) => {
+//         if (err) throw err;
+//         res.redirect('/node1');
+//     });
+// });
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 app.post('/delete', (req, res) => {
-    const { retailer_code } = req.body;
-    const query = 'DELETE FROM go_daily_sales WHERE `Retailer Code` = ?';
-    nodes.node1.query(query, [retailer_code], (err, results) => {
+    const { retailer_code, product_number, order_method_code, date, quantity, unit_price, unit_sale_price } = req.body;
+    const formattedDate = formatDate(date); // Format the date as YYYY-MM-DD
+    const query = 'DELETE FROM go_daily_sales WHERE `Retailer Code` = ? AND `Product Number` = ? AND `Order Method Code` = ? AND `Date` = ? AND `Quantity` = ? AND `Unit Price` = ? AND `Unit Sale Price` = ?';
+    nodes.node1.query(query, [retailer_code, product_number, order_method_code, formattedDate, quantity, unit_price, unit_sale_price], (err, results) => {
         if (err) throw err;
+        console.log(req.body);
         res.redirect('/node1');
     });
 });
+
 
 app.listen(3000, () => {
     console.log('server is listening on port ' + 3000);
