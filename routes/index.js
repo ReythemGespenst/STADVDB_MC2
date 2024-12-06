@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { nodes, getReadReplica } = require('../config/database');
 const { runConcurrencyTest } = require('./testScript');
+const { promoteReadReplica, checkMasterStatus, configureAsReplica, promoteOriginalMaster } = require('../controllers/AWSController');
 const formatDate  = require('../utils/formatDate');
 
 // Function to get a random slave node for load balancing
@@ -139,6 +140,46 @@ router.get('/tests', (req, res) => {
 router.post('/run-test', async (req, res) => {
     const result = await runConcurrencyTest();
     res.render('tests', { result: result.join('\n') });
+});
+
+// Route to promote a read replica to master
+router.post('/promote-replica', async (req, res) => {
+    try {
+        await promoteReadReplica('your-read-replica-identifier');
+        res.render('tests', { result: 'Read replica promoted to master successfully' });
+    } catch (err) {
+        res.render('tests', { result: `Error: ${err.message}` });
+    }
+});
+
+// Route to check master status
+router.get('/check-master-status', async (req, res) => {
+    try {
+        const status = await checkMasterStatus('your-master-instance-identifier');
+        res.render('tests', { result: `Master status: ${status}` });
+    } catch (err) {
+        res.render('tests', { result: `Error: ${err.message}` });
+    }
+});
+
+// Route to configure original master as replica
+router.post('/configure-replica', async (req, res) => {
+    try {
+        await configureAsReplica('original-master-identifier', 'current-master-endpoint');
+        res.render('tests', { result: 'Original master configured as replica successfully' });
+    } catch (err) {
+        res.render('tests', { result: `Error: ${err.message}` });
+    }
+});
+
+// Route to promote original master back to primary
+router.post('/promote-original-master', async (req, res) => {
+    try {
+        await promoteOriginalMaster('original-master-identifier');
+        res.render('tests', { result: 'Original master promoted back to primary successfully' });
+    } catch (err) {
+        res.render('tests', { result: `Error: ${err.message}` });
+    }
 });
 
 module.exports = router;

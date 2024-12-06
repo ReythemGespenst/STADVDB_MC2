@@ -18,5 +18,25 @@
         <h2>Result:</h2>
         <pre><%= result %></pre>
     <% } %>
+
+    <h2>Node Takeover</h2>
+    <form action="/promote-replica" method="post">
+        <button type="submit">Promote Read Replica to Master</button>
+    </form>
+
+    <h2>Check Master Status</h2>
+    <form action="/check-master-status" method="get">
+        <button type="submit">Check Master Status</button>
+    </form>
+
+    <h2>Configure Original Master as Replica</h2>
+    <form action="/configure-replica" method="post">
+        <button type="submit">Configure Original Master as Replica</button>
+    </form>
+
+    <h2>Promote Original Master Back to Primary</h2>
+    <form action="/promote-original-master" method="post">
+        <button type="submit">Promote Original Master</button>
+    </form>
 </body>
 </html>
