@@ -1,12 +1,5 @@
 const {RDSClient, PromoteReadReplicaCommand, DescribeDBInstancesCommand} = require('@aws-sdk/client-rds');
 
-const rdsClient = new RDSClient({
-    region: ,
-    credentials: {
-
-    }
-});
-
 async function promoteReadReplica(dbInstanceIdentifier) {
     try {
         const command = new PromoteReadReplicaCommand({
@@ -37,7 +30,36 @@ async function checkMasterStatus(masterInstanceIdentifier) {
     }
   }
   
+  const { ModifyDBInstanceCommand } = require('@aws-sdk/client-rds');
+
+async function configureAsReplica(originalMasterIdentifier, currentMasterEndpoint) {
+      const command = new ModifyDBInstanceCommand({
+          DBInstanceIdentifier: originalMasterIdentifier,
+          ReplicationSourceIdentifier: currentMasterEndpoint,
+      });
+      await rdsClient.send(command);
+      console.log('Original master configured as replica.');
+}
+
+
 const readReplicaIdentifier = 'dunno yet, waiting for Tim';
+
+const rdsClient = new RDSClient({
+  region: ,
+  credentials: {
+
+  }
+});
+
+const { PromoteReadReplicaCommand } = require('@aws-sdk/client-rds');
+
+async function promoteOriginalMaster(originalMasterIdentifier) {
+    const command = new PromoteReadReplicaCommand({
+        DBInstanceIdentifier: originalMasterIdentifier,
+    });
+    await rdsClient.send(command);
+    console.log('Original master promoted back to primary.');
+}
 
 setInterval(async () => {
     const status = await checkMasterStatus('master_instance_idk yet coz tim not awake yet');
