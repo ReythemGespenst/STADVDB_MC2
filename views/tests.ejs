@@ -6,9 +6,14 @@
 <body>
     <h1>SQL Test</h1>
     <h2>Concurrency Test</h2>
+    <p>testData = ['1215', '83110', '2', '2023-10-01', 10, 100, 120]</p>
+    <p>INSERT INTO go_daily_sales (`Retailer code`, `Product number`, `Order method code`, `Date`, `Quantity`, `Unit price`, `Unit sale price`) VALUES (?, ?, ?, ?, ?, ?, ?)</p>
+    <p>SELECT * FROM go_daily_sales WHERE `Retailer code` = ? AND `Product number` = ? AND `Order method code` = ? AND `Date` = ? AND `Quantity` = ? AND `Unit price` = ? AND `Unit sale price` = ?</p>
+    <p>DELETE FROM go_daily_sales WHERE `Retailer Code` = ? AND `Product Number` = ? AND `Order Method Code` = ? AND `Date` = ? AND `Quantity` = ? AND `Unit Price` = ? AND `Unit Sale Price` = ?</p>
     <form action="/run-test" method="post">
         <button type="submit">Run Test</button>
     </form>
+    
     <% if (result) { %>
         <h2>Result:</h2>
         <pre><%= result %></pre>

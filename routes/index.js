@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { nodes, getReadReplica } = require('../config/database');
-const testScript = require('./testScript');
+const { runConcurrencyTest } = require('./testScript');
 const formatDate  = require('../utils/formatDate');
 
 // Function to get a random slave node for load balancing
@@ -137,7 +137,7 @@ router.get('/tests', (req, res) => {
 
 // Route to handle the test script execution
 router.post('/run-test', async (req, res) => {
-    const result = await testScript();
+    const result = await runConcurrencyTest();
     res.render('tests', { result: result.join('\n') });
 });
 
