@@ -8,14 +8,17 @@
 </head>
 <body>
     <header>
-        <h1>Node Page</h1>
+        <h1>Node <%= no %></h1>
     </header>
 
     <main>
         <section id="node-info">
             <p id="node-details">IP: <%= ip %> | Port: <%= port %></p>
         </section>
-
+        <form action="/read2" method="GET">
+            <input type="number" name="retailer_code" placeholder="Retailer Code">
+            <button type="submit">Read</button>
+        </form>
         <section id="sales-data">
             <h2>Sales Data</h2>
             <table>
@@ -28,6 +31,7 @@
                         <th>Quantity</th>
                         <th>Unit Price</th>
                         <th>Unit Sale Price</th>
+                        <th>Country</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,6 +45,7 @@
                             <td><%= row['Quantity'] %></td>
                             <td><%= row['Unit price'] %></td>
                             <td><%= row['Unit sale price'] %></td>
+                            <td><%= row['Country'] %></td>
                         </tr>
                     <% }); %>
                 </tbody>

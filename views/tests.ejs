@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQL Test</title>
+</head>
+<body>
+    <h1>SQL Test</h1>
+    <h2>Concurrency Test</h2>
+    <form action="/run-test" method="post">
+        <button type="submit">Run Test</button>
+    </form>
+    <% if (result) { %>
+        <h2>Result:</h2>
+        <pre><%= result %></pre>
+    <% } %>
+</body>
+</html>
